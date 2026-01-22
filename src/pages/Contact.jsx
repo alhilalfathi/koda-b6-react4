@@ -1,7 +1,9 @@
+import { Navbar } from "../component/Navbar"
+
 export const Contact = ()=>{
     return(
         <div>
-            <h1>Contact</h1>
+            <Navbar contact={"text-blue-600"} />
         </div>
     )
 }
