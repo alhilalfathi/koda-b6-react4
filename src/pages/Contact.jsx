@@ -1,5 +1,53 @@
 import { Navbar } from "../component/Navbar"
+import { useEffect, useState } from "react"
+
 export const Contact = () => {
+  const [form, setForm] = useState({
+      name: "",
+      email: "",
+      phone: "",
+      message: "",
+    })
+
+    const [messages, setMessages] = useState([])
+
+    useEffect(() => {
+        const data = JSON.parse(localStorage.getItem("contactMessages")) || []
+        setMessages(data)
+      }, [])
+    
+      const handleChange = (e) => {
+        setForm({
+          ...form,
+          [e.target.id]: e.target.value,
+        })
+      }
+
+      const handleSubmit = (e) => {
+        e.preventDefault()
+
+        const newMessage = {
+          ...form,
+          date: new Date().toLocaleString(),
+        }
+
+        
+        const updatedMessages = [...messages,newMessage]
+        setMessages(updatedMessages)
+
+        localStorage.setItem(
+          "contactMessages",
+          JSON.stringify(updatedMessages)
+        )
+
+        setForm({
+          name: "",
+          email: "",
+          phone: "",
+          message: "",
+        })
+      }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0b0f3b] via-[#141852] to-[#0b0f3b] text-white pb-10">
       
@@ -50,6 +98,29 @@ export const Contact = () => {
                 ▶
               </div>
           </div>
+
+          <div className="mt-12">
+            <h3 className="text-xl font-semibold mb-4">Messages</h3>
+
+            {messages.length === 0 && (
+              <p className="text-gray-400 text-sm">Belum ada pesan</p>
+            )}
+
+            <div className="space-y-4 max-h-72 overflow-y-auto pr-2">
+              {messages.map((msg, i) => (
+                <div
+                  key={i}
+                  className="border border-white/20 rounded-lg p-4 text-sm"
+                >
+                  <p className="font-semibold">{msg.name}</p>
+                  <p className="text-gray-300">{msg.email}</p>
+                  <p className="text-gray-400">{msg.phone}</p>
+                  <p className="mt-2">{msg.message}</p>
+                  <p className="text-xs text-gray-500 mt-2">{msg.date}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
        
@@ -58,11 +129,11 @@ export const Contact = () => {
             GET IN TOUCH
           </h3>
 
-          <form className="space-y-6">
-            <input type="text" id="name" placeholder="Name" className="w-full bg-transparent border-b border-white/30 focus:outline-none focus:border-white py-2"/>
-            <input type="email" id="email" placeholder="Email" className="w-full bg-transparent border-b border-white/30 focus:outline-none focus:border-white py-2"/>
-            <input type="text" placeholder="Phone number" className="w-full bg-transparent border-b border-white/30 focus:outline-none focus:border-white py-2"/>
-            <textarea rows="3" placeholder="Message" className="w-full bg-transparent border-b border-white/30 focus:outline-none focus:border-white py-2 resize-none"/>
+          <form className="space-y-6"onSubmit={handleSubmit}>
+            <input type="text" id="name" placeholder="Name" value={form.name} onChange={handleChange} className="w-full bg-transparent border-b border-white/30 focus:outline-none focus:border-white py-2"/>
+            <input type="email" id="email" placeholder="Email" value={form.email} onChange={handleChange}  className="w-full bg-transparent border-b border-white/30 focus:outline-none focus:border-white py-2"/>
+            <input type="text" id="phone" placeholder="Phone number" value={form.phone} onChange={handleChange} className="w-full bg-transparent border-b border-white/30 focus:outline-none focus:border-white py-2"/>
+            <textarea rows="3" id="message" placeholder="Message" value={form.message} onChange={handleChange} className="w-full bg-transparent border-b border-white/30 focus:outline-none focus:border-white py-2 resize-none"/>
 
             <button type="submit" className="w-full mt-6 py-3 bg-[#1b1f6b] rounded-lg font-semibold hover:bg-[#2a2fa0] transition shadow-md">
               Send Message
